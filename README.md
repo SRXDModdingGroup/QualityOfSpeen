@@ -3,7 +3,7 @@
 
 # Current Features
 - **Instant Restart!** Press the `Restart` key when playing to restart the track from the beginning. Check your settings which key is bound to `Restart`
-- **Extended Discord Rich Presence!** Discord will now show if you failed a song or if you are editing one.
+- **Extended Discord Rich Presence!** Discord will now show if you failed a song or if you are editing one (and more!)
 
 # How to build
  Follow [this guide](https://github.com/Raoul1808/SpeenChroma/wiki/Building-the-mod) to build the mod.
