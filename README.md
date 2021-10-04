@@ -2,7 +2,7 @@
  Quality of Speen is a Spin Rhythm XD mod adding a bunch of Quality of Life features (duh) to the game.
 
 # Current Features
-- **Instant Restart!** Press the `Restart` key when playing to restart the track from the beginning. Check in your settings which key is bound to `Restart`
+- **Instant Restart!** Press the `Restart` key when playing to restart the track from the beginning. Check your settings which key is bound to `Restart`
 - **Extended Discord Rich Presence!** Discord will now show if you failed a song or if you are editing one.
 
 # How to build
