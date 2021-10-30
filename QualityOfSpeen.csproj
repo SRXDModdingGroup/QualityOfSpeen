@@ -60,6 +60,7 @@
     <Compile Include="Features\DiscordRPCFix.cs" />
     <Compile Include="Features\InstantRestartKey.cs" />
     <Compile Include="InGameState.cs" />
+    <Compile Include="IniFile.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
