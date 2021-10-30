@@ -104,6 +104,10 @@ namespace MewsToolbox
             }
             catch
             {
+                if (!iniContent.ContainsKey(section))
+                    iniContent.Add(section, new Dictionary<string, string>());
+                if (!iniContent[section].ContainsKey(setting))
+                    iniContent[section].Add(setting, defaultValue.ToString());
                 return defaultValue;
             }
         }
