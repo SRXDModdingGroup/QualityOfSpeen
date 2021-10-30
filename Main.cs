@@ -15,7 +15,7 @@ namespace QualityOfSpeen
         #region Mod Metadata
         public const string MOD_ID = "QualityOfSpeen";
         public const string MOD_NAME = "Quality of Speen";
-        public const string MOD_VERSION = "1.0.0";
+        public const string MOD_VERSION = "1.0.1";
         #endregion
 
         #region Mod Variables
