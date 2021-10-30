@@ -1,7 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.IL2CPP;
 using HarmonyLib;
+using MewsToolbox;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -29,11 +31,21 @@ namespace QualityOfSpeen
             // Sets Global Game Variables to use by other classes
             harmony.PatchAll<StatePatches>();
 
+            // Load config. If it does not exist, create one.
+            if (!File.Exists(configFilePath))
+                File.Create(configFilePath).Close();
+            modConfig = new IniFile(configFilePath);
+
             // Autoload all Quality of Speen Features in the Features namespace
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t=>string.Equals(t.Namespace, "QualityOfSpeen.Features", StringComparison.Ordinal))) // Source: https://stackoverflow.com/questions/949246/how-can-i-get-all-classes-within-a-namespace
             {
                 try
                 {
+                    MethodInfo method;
+                    if ((method = type.GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Static)) != null)
+                    {
+                        method.Invoke(null, null);
+                    }
                     harmony.PatchAll(type);
                     Log.LogInfo($"Loaded {type.ToString().Replace(type.Namespace+".", "")}");
                 }
@@ -43,6 +55,14 @@ namespace QualityOfSpeen
                 }
             }
         }
+        #endregion
+
+        #region Mod Config
+
+        private static IniFile modConfig;
+        public static IniFile ModConfig => modConfig;
+        private static string configFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Speen Mods", "QualityOfSpeenConfig.ini");
+
         #endregion
 
         #region Global Game Variables
