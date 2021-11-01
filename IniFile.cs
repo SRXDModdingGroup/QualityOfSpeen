@@ -61,6 +61,7 @@ namespace MewsToolbox
                 {
                     sb.AppendLine(valuePair.Key + "=" + valuePair.Value.ToString(Culture));
                 }
+                sb.AppendLine();
             }
 
             return sb.ToString();
