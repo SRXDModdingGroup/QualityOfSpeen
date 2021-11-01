@@ -39,6 +39,7 @@ namespace QualityOfSpeen
             // Autoload all Quality of Speen Features in the Features namespace
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t=>string.Equals(t.Namespace, "QualityOfSpeen.Features", StringComparison.Ordinal))) // Source: https://stackoverflow.com/questions/949246/how-can-i-get-all-classes-within-a-namespace
             {
+                Log.LogInfo($"QoS: Loading feature {type.ToString().Replace(type.Namespace+".", "")}");
                 try
                 {
                     MethodInfo method;
@@ -47,7 +48,6 @@ namespace QualityOfSpeen
                         method.Invoke(null, null);
                     }
                     harmony.PatchAll(type);
-                    Log.LogInfo($"Loaded {type.ToString().Replace(type.Namespace+".", "")}");
                 }
                 catch (Exception e)
                 {
@@ -68,6 +68,7 @@ namespace QualityOfSpeen
         #region Global Game Variables
         public static InGameState InGameState { get; private set; }
         public static bool IsPlayingCustom { get; private set; }
+        public static bool IsInCustomsMenu { get; private set; }
         public static bool IsRestarting { get; private set; }
         public static bool IsDead { get; private set; }
         public static bool HasWon { get; private set; }
@@ -119,6 +120,7 @@ namespace QualityOfSpeen
             [HarmonyPrefix]
             private static void XDMainMenuOpenPrefix()
             {
+                IsInCustomsMenu = false;
                 InGameState = InGameState.MainMenu;
             }
 
@@ -135,6 +137,7 @@ namespace QualityOfSpeen
             {
                 InGameState = InGameState.CustomLevelSelectMenu;
                 IsPlayingCustom = false;
+                IsInCustomsMenu = true;
                 ResetTrackVariables();
             }
 
@@ -142,6 +145,7 @@ namespace QualityOfSpeen
             [HarmonyPrefix]
             private static void XDLevelSelectMenuBaseOpenPrefix()
             {
+                if (IsInCustomsMenu) return;
                 InGameState = InGameState.LevelSelectMenu;
                 ResetTrackVariables();
             }
