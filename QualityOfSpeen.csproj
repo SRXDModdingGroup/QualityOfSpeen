@@ -31,47 +31,49 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Features\DiscordRPCFix.cs" />
+    <Compile Include="Features\InstantRestartKey.cs" />
+    <Compile Include="InGameState.cs" />
+    <Compile Include="IniFile.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\Libs\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\Libs\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx.Core">
-      <HintPath>..\Libs\BepInEx.Core.dll</HintPath>
+    <Reference Include="BepInEx">
+      <HintPath>..\Libs\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx.IL2CPP">
-      <HintPath>..\Libs\BepInEx.IL2CPP.dll</HintPath>
+    <Reference Include="BepInEx.Harmony">
+      <HintPath>..\Libs\BepInEx.Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Il2Cppmscorlib">
-      <HintPath>..\Libs\Il2Cppmscorlib.dll</HintPath>
+    <Reference Include="SSD.PlayerServiceManager, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\SSD.PlayerServiceManager.dll</HintPath>
     </Reference>
-    <Reference Include="SSD.PlayerServiceManager, Version=3.7.1.6, Culture=neutral, PublicKeyToken=null" />
-    <Reference Include="UnhollowerBaseLib">
-      <HintPath>..\Libs\UnhollowerBaseLib.dll</HintPath>
+    <Reference Include="UnityEngine">
+      <HintPath>..\Libs\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
+    <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UI, Version=3.7.1.6, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="UnityEngine.UI, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Features\DiscordRPCFix.cs" />
-    <Compile Include="Features\InstantRestartKey.cs" />
-    <Compile Include="Features\NoIntro.cs" />
-    <Compile Include="InGameState.cs" />
-    <Compile Include="IniFile.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "D:\Steam\steamapps\common\Spin Rhythm\BepInEx\plugins" /Y
-start "" "steam://rungameid/1058830"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Spin Rhythm\BepInEx\plugins" /Y
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

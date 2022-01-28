@@ -10,8 +10,12 @@ namespace MewsToolbox
     {
         private Dictionary<string, Dictionary<string, string>> iniContent;
         private string FilePath;
-        public static IFormatProvider Culture;
+        public IFormatProvider Culture;
 
+        /// <summary>
+        /// Creates a new Ini file handler for the file at the given path. /!\ THE FILE MUST EXIST FIRST. IT WILL NOT BE CREATED AUTOMATICALLY IF MISSING
+        /// </summary>
+        /// <param name="filePath">The path to the file. Make sure the given path is valid!</param>
         public IniFile(string filePath)
         {
             FilePath = filePath;
@@ -21,9 +25,14 @@ namespace MewsToolbox
             ParseFile(fileContent);
         }
 
-        public Dictionary<string, string> this[string setting]
+        /// <summary>
+        /// Get a section as a string-string dictionary
+        /// </summary>
+        /// <param name="section">The section to get</param>
+        /// <returns>The section as a string-string dictionary</returns>
+        public Dictionary<string, string> this[string section]
         {
-            get { return iniContent[setting]; }
+            get { return iniContent[section]; }
         }
 
         private void ParseFile(string[] content)
@@ -53,7 +62,7 @@ namespace MewsToolbox
         private string MakeString()
         {
             StringBuilder sb = new StringBuilder();
-            
+
             foreach (KeyValuePair<string, Dictionary<string, string>> pair in iniContent)
             {
                 sb.AppendLine("[" + pair.Key + "]");
@@ -67,20 +76,39 @@ namespace MewsToolbox
             return sb.ToString();
         }
 
-        public void AddSetting(string section, string settingName, string defaultValue)
-        {
-            if (!iniContent.ContainsKey(section)) iniContent.Add(section, new Dictionary<string, string>());
-            iniContent[section].Add(settingName, defaultValue);
-        }
-
+        /// <summary>
+        /// Saves the file
+        /// </summary>
         public void SaveFile() => SaveFile(FilePath);
 
+        /// <summary>
+        /// Saves the file at a certain path
+        /// </summary>
+        /// <param name="filePath">The path to save the file to</param>
         public void SaveFile(string filePath)
         {
             File.WriteAllText(filePath, MakeString());
         }
 
-        public T GetValueOrDefaultTo<T>(string section, string setting, T defaultValue)
+        /// <summary>
+        /// Reloads the file if any external changes were made
+        /// </summary>
+        public void ReloadFile()
+        {
+            iniContent = new Dictionary<string, Dictionary<string, string>>();
+            ParseFile(File.ReadAllLines(FilePath));
+        }
+
+        /// <summary>
+        /// Safely get a value from the config file. It will automatically be cast to the requested type. If an error occurs or the config entry is missing, it can be created automatically.
+        /// </summary>
+        /// <typeparam name="T">The type to cast the config entry to. Currently supported: string, bool, int, float, double, decimal</typeparam>
+        /// <param name="section">The config section to get the value from</param>
+        /// <param name="setting">The config entry to get the value from</param>
+        /// <param name="defaultValue">The value returned if the entry was not found or a cast isn't supported. In the first case, this value can be used to make a new config entry</param>
+        /// <param name="setIfDoesntExist">If set to true, the config file will be updated with the new value. Default: true</param>
+        /// <returns>The setting you're looking for, or defaultValue if the value is not found</returns>
+        public T GetValueOrDefaultTo<T>(string section, string setting, T defaultValue, bool setIfDoesntExist = true, bool saveIfDoesntExist = true)
         {
             try
             {
@@ -96,6 +124,12 @@ namespace MewsToolbox
                     case TypeCode.Int32:
                         return (T)(object)int.Parse(value);
 
+                    case TypeCode.Single:
+                        return (T)(object)float.Parse(value, Culture);
+
+                    case TypeCode.Double:
+                        return (T)(object)double.Parse(value, Culture);
+
                     case TypeCode.Decimal:
                         return (T)(object)decimal.Parse(value, Culture);
 
@@ -105,13 +139,42 @@ namespace MewsToolbox
             }
             catch
             {
-                if (!iniContent.ContainsKey(section))
-                    iniContent.Add(section, new Dictionary<string, string>());
-                if (!iniContent[section].ContainsKey(setting))
-                    iniContent[section].Add(setting, defaultValue.ToString());
-                SaveFile();
+                if (setIfDoesntExist)
+                    SetValue(section, setting, defaultValue, saveIfDoesntExist);
                 return defaultValue;
             }
         }
+
+        /// <summary>
+        /// Sets a value in the config
+        /// </summary>
+        /// <typeparam name="T">The type of the value</typeparam>
+        /// <param name="section">The section to save the value to</param>
+        /// <param name="setting">The config entry to save the value to</param>
+        /// <param name="value">The value to save</param>
+        /// <param name="immediatelySave">If set to true, immediately save the config file afterwards.</param>
+        public void SetValue<T>(string section, string setting, T value, bool immediatelySave = true)
+        {
+            if (!iniContent.ContainsKey(section))
+                iniContent.Add(section, new Dictionary<string, string>());
+            if (!iniContent[section].ContainsKey(setting))
+                iniContent[section].Add(setting, value.ToString());
+            if (immediatelySave) SaveFile();
+        }
+
+        /// <summary>
+        /// Checks if a section exists
+        /// </summary>
+        /// <param name="section">The section to check</param>
+        /// <returns>True if the section exists, False otherwise</returns>
+        public bool Exists(string section) => iniContent.ContainsKey(section);
+
+        /// <summary>
+        /// Checks if a setting exists
+        /// </summary>
+        /// <param name="section">The section to check</param>
+        /// <param name="setting">The setting to check</param>
+        /// <returns>True if both the section and the setting exist, False otherwise</returns>
+        public bool Exists(string section, string setting) => iniContent.ContainsKey(section) && iniContent[section].ContainsKey(setting);
     }
 }

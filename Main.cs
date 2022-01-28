@@ -1,5 +1,5 @@
 ﻿using BepInEx;
-using BepInEx.IL2CPP;
+using BepInEx.Logging;
 using HarmonyLib;
 using MewsToolbox;
 using System;
@@ -10,22 +10,22 @@ using System.Reflection;
 namespace QualityOfSpeen
 {
     [BepInPlugin(MOD_ID, MOD_NAME, MOD_VERSION)]
-    public class Main : BasePlugin
+    public class Main : BaseUnityPlugin
     {
         #region Mod Metadata
         public const string MOD_ID = "QualityOfSpeen";
         public const string MOD_NAME = "Quality of Speen";
-        public const string MOD_VERSION = "1.0.1";
+        public const string MOD_VERSION = "1.0.2";
         #endregion
 
         #region Mod Variables
-        public static BepInEx.Logging.ManualLogSource Logger;
+        private static ManualLogSource logger;
         #endregion
 
-        #region BasePlugin.Load() override
-        public override void Load()
+        #region Plugin Awake
+        void Awake()
         {
-            Logger = Log;
+            logger = Logger;
             Harmony harmony = new Harmony(MOD_ID);
 
             // Sets Global Game Variables to use by other classes
@@ -39,34 +39,39 @@ namespace QualityOfSpeen
             // Autoload all Quality of Speen Features in the Features namespace
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t=>string.Equals(t.Namespace, "QualityOfSpeen.Features", StringComparison.Ordinal))) // Source: https://stackoverflow.com/questions/949246/how-can-i-get-all-classes-within-a-namespace
             {
-                Log.LogInfo($"QoS: Loading feature {type.ToString().Replace(type.Namespace+".", "")}");
+                LogInfo($"QoS: Loading feature {type.ToString().Replace(type.Namespace+".", "")}");
                 try
                 {
-                    MethodInfo method;
-                    if ((method = type.GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Static)) != null)
-                    {
-                        method.Invoke(null, null);
-                    }
                     harmony.PatchAll(type);
                 }
                 catch (Exception e)
                 {
-                    Log.LogError($"Failed to load {type}: {e}");
+                    LogError($"Failed to load {type}: {e}");
                 }
             }
         }
         #endregion
 
-        #region Mod Config
+        #region Logger
 
-        private static IniFile modConfig;
-        public static IniFile ModConfig => modConfig;
-        private static string configFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Speen Mods", "QualityOfSpeenConfig.ini");
+        public static void Log(LogLevel level, object msg) => logger.Log(level, msg);
+        public static void LogInfo(object msg) => Log(LogLevel.Info, msg);
+        public static void LogWarning(object msg) => Log(LogLevel.Warning, msg);
+        public static void LogError(object msg) => Log(LogLevel.Error, msg);
+        public static void LogDebug(object msg) => Log(LogLevel.Debug, msg);
+        public static void LogMessage(object msg) => Log(LogLevel.Message, msg);
 
         #endregion
 
+        #region Mod Config
+        private static IniFile modConfig;
+        public static IniFile ModConfig => modConfig;
+        private static string configFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Speen Mods", "QualityOfSpeenConfig.ini");
+        #endregion
+
         #region Global Game Variables
-        public static InGameState InGameState { get; private set; }
+        private static InGameState inGameState;
+        public static InGameState InGameState { get => inGameState; private set { LogMessage("Changed ingamestate: " + value); inGameState = value; } }
         public static bool IsPlayingCustom { get; private set; }
         public static bool IsInCustomsMenu { get; private set; }
         public static bool IsRestarting { get; private set; }
