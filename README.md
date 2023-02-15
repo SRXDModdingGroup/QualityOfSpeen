@@ -1,3 +1,7 @@
+### This repository is now archived.
+ While this was intended to be a multi-feature mod, the only meaningful feature the mod brought was custom Rich Presence, which is going to be redone from the ground-up as a separate mod.
+ The mod will remain open-source, but won't be updated anymore to work on the latest versions of the game.
+
 # Quality of Speen
  Quality of Speen is a Spin Rhythm XD mod adding a bunch of Quality of Life features (duh) to the game.
 
